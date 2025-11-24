@@ -1,8 +1,9 @@
+Ryu, [24/11/2025 23:47]
 import React from 'react';
 
-export const Icon = ({ name, className = "", onClick }: { name: string; className?: string; onClick?: () => void }) => (
-  <span
-    className={`material-symbols-rounded select-none transition-all duration-300 ${className}`}
+export const Icon = ({ name, className = "", onClick }: any) => (
+  <span 
+    className={`material-symbols-rounded select-none ${className}`} 
     onClick={onClick}
     style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
   >
@@ -11,8 +12,8 @@ export const Icon = ({ name, className = "", onClick }: { name: string; classNam
 );
 
 export const Button = ({ children, variant = 'primary', onClick, className = '', disabled = false, delay = '' }: any) => {
-  const base = `w-full py-4 px-6 rounded-2xl font-bold tracking-wide transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 relative overflow-hidden group shadow-sm animate-pop-in ${delay}`;
-
+  const base = w-full py-4 px-6 rounded-2xl font-bold tracking-wide transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 relative overflow-hidden group shadow-sm animate-pop-in ${delay};
+  
   const variants = {
     primary: "bg-blue-600 text-white shadow-[0_10px_20px_-5px_rgba(37,99,235,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(37,99,235,0.5)] hover:translate-y-[-2px]",
     secondary: "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 float-3d",
@@ -26,7 +27,6 @@ export const Button = ({ children, variant = 'primary', onClick, className = '',
       disabled={disabled}
       className={`${base} ${variants[variant as keyof typeof variants]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
     >
-      {/* Subtle shine effect for primary buttons */}
       {variant === 'primary' && (
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12"></div>
       )}
@@ -67,7 +67,7 @@ export const BottomNav = ({ activeTab, onTabChange, showVoiceAssist, isListening
   ];
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-[360px] z-50 perspective-1000">
+    <div className="w-full max-w-[360px] perspective-1000">
       <div className="glass-panel rounded-full px-2 py-2 flex justify-between items-center shadow-[0_20px_40px_-5px_rgba(0,0,0,0.1)] border border-white/60 bg-white/30 backdrop-blur-xl relative">
 
         {tabs.slice(0, 2).map((tab) => (
@@ -75,7 +75,9 @@ export const BottomNav = ({ activeTab, onTabChange, showVoiceAssist, isListening
         ))}
 
         {/* Central Voice Assist Button */}
-        {showVoiceAssist ? (
+
+Ryu, [24/11/2025 23:47]
+{showVoiceAssist ? (
           <div className="relative -top-6 group">
             {isListening && (
               <>
