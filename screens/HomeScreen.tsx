@@ -103,48 +103,84 @@ export const HomeScreen = ({ user, transactions, onNavigate, onRequestVerificati
       </div>
 
       {/* Action Grid */}
-      <div className="grid grid-cols-4 gap-4 perspective-1000">
-        {[
-          { icon: 'send', label: 'Send', action: 'SEND_MONEY', color: 'text-blue-600 bg-blue-50/80', border: 'border-blue-100', delay: 'delay-200' },
-          { icon: 'receipt_long', label: 'Bills', action: 'BILLS', color: 'text-purple-600 bg-purple-50/80', border: 'border-purple-100', delay: 'delay-300' },
-          { icon: 'add_card', label: 'Top-up', action: 'TOPUP', color: 'text-pink-600 bg-pink-50/80', border: 'border-pink-100', delay: 'delay-400' },
-          { icon: 'qr_code_scanner', label: 'Scan', action: 'SCAN', color: 'text-emerald-600 bg-emerald-50/80', border: 'border-emerald-100', delay: 'delay-500' }
-        ].map((item, i) => (
-          <button 
-            key={i} 
-            onClick={() => onNavigate(item.action)}
-            className={`flex flex-col items-center gap-3 group animate-pop-in ${item.delay}`}
-          >
-            <div className={`w-16 h-16 rounded-2xl ${item.color} backdrop-blur-md border ${item.border} flex items-center justify-center float-3d transition-all duration-300 relative overflow-hidden`}>
-              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity"></div>
-              <Icon name={item.icon} className="text-2xl" />
-            </div>
-            <span className="text-xs font-bold text-slate-600 group-hover:text-slate-900 tracking-wide transition-colors">{item.label}</span>
-          </button>
-        ))}
+<div className="grid grid-cols-6 gap-4 perspective-1000">
+  {[
+    {
+      icon: 'send',
+      label: 'Send',
+      action: 'SEND_MONEY',
+      color: 'text-blue-600 bg-blue-50/80',
+      border: 'border-blue-100',
+      delay: 'delay-200'
+    },
+
+    {
+      icon: 'receipt_long',
+      label: 'Bills',
+      action: 'BILLS',
+      color: 'text-purple-600 bg-purple-50/80',
+      border: 'border-purple-100',
+      delay: 'delay-300'
+    },
+
+    {
+      icon: 'add_card',
+      label: 'Top-up',
+      action: 'TOPUP',
+      color: 'text-pink-600 bg-pink-50/80',
+      border: 'border-pink-100',
+      delay: 'delay-400'
+    },
+
+    {
+      icon: 'qr_code_scanner',
+      label: 'Scan',
+      action: 'SCAN',
+      color: 'text-emerald-600 bg-emerald-50/80',
+      border: 'border-emerald-100',
+      delay: 'delay-500'
+    },
+
+    {
+      icon: 'shield',
+      label: 'Protect',
+      action: 'FRAUD_SETTINGS',
+      color: 'text-red-600 bg-red-50/80',
+      border: 'border-red-100',
+      delay: 'delay-600'
+    },
+
+    // ⭐ NEW SUPPORT BUTTON
+    {
+      icon: 'support_agent',
+      label: 'Support',
+      action: 'DECLARATION_CENTER',
+      color: 'text-slate-600 bg-slate-50',
+      border: 'border-slate-200',
+      delay: 'delay-700'
+    }
+
+  ].map((item, i) => (
+    <button
+      key={i}
+      onClick={() => onNavigate(item.action)}
+      className={`flex flex-col items-center gap-3 group animate-pop-in ${item.delay}`}
+    >
+      <div
+        className={`w-16 h-16 rounded-2xl ${item.color} backdrop-blur-md border ${item.border} flex items-center justify-center float-3d transition-all duration-300 relative overflow-hidden group-hover:scale-105 group-hover:shadow-md`}
+      >
+        <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity"></div>
+        <Icon name={item.icon} className="text-2xl" />
       </div>
 
-      {/* Analytics */}
-      <Card noPadding className="bg-white/60 backdrop-blur-md border-slate-100 shadow-sm" delay="delay-200">
-        <div className="p-5 flex justify-between items-center border-b border-slate-100/50">
-          <h3 className="font-bold text-slate-800">Spending Flow</h3>
-          <span className="text-xs font-bold text-emerald-600 bg-emerald-50/80 px-3 py-1 rounded-full border border-emerald-100">▼ 12% vs last week</span>
-        </div>
-        <div className="h-40 w-full relative">
-            <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={SpendingData}>
-                    <defs>
-                        <linearGradient id="colorSpend" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
-                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                        </linearGradient>
-                    </defs>
-                    <Tooltip contentStyle={{ backgroundColor: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(10px)', border: '1px solid #e2e8f0', borderRadius: '12px', color: '#0f172a', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }} />
-                    <Area type="monotone" dataKey="amount" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorSpend)" animationDuration={2000} />
-                </AreaChart>
-            </ResponsiveContainer>
-        </div>
-      </Card>
+      <span className="text-xs font-bold text-slate-600 group-hover:text-slate-900 tracking-wide transition-colors">
+        {item.label}
+      </span>
+    </button>
+  ))}
+</div>
+
+
 
       {/* Transactions */}
       <div>

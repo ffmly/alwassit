@@ -1,210 +1,230 @@
+// --- START OF FILE App.tsx ---
 
 import React, { useState } from 'react';
-import { AppView, Transaction, TransactionType, User } from './types';
-import { Icon, BottomNav } from './components/UIComponents';
 
-// Import Screens
+// --- CONTEXT PROVIDERS ---
+import { FraudProvider } from './context/FraudContext';
+import { CreditProvider } from './context/CreditContext';
+import { DeclarationProvider } from './context/DeclarationContext';
+import { NotificationProvider } from './context/NotificationContext';
+
+// --- UI COMPONENTS ---
+import { BottomNav } from './components/UIComponents';
+// FIX: Import the standalone NotificationUI to place it manually in the layout
+import { NotificationUI } from './components/NotificationOverlay';
+
+// --- SCREENS ---
+// Auth & Onboarding
 import { LandingScreen } from './screens/LandingScreen';
 import { LoginScreen } from './screens/LoginScreen';
 import { SignupScreen } from './screens/SignupScreen';
 import { VerificationScreen } from './screens/VerificationScreen';
+
+// Main Dashboard & Utils
 import { HomeScreen } from './screens/HomeScreen';
-import { SendMoneyScreen } from './screens/SendMoneyScreen';
-import { LoanScreen } from './screens/LoanScreen';
 import { AIAssistantScreen } from './screens/AIAssistantScreen';
+import { ScanScreen } from './screens/ScanScreen';
+
+// Financial Features
+import { CreditScoreScreen } from './screens/CreditScoreScreen';
+import { LoanRequestScreen } from './screens/LoanRequestScreen';
 import { BillsScreen } from './screens/BillsScreen';
 import { TopUpScreen } from './screens/TopUpScreen';
-import { ScanScreen } from './screens/ScanScreen';
-import { CreditScoreScreen } from './screens/CreditScoreScreen';
+import { SendMoneyScreen } from './screens/SendMoneyScreen';
 
-// --- Mock Data ---
-const MOCK_USER: User = {
-  id: 'u1',
-  firstName: 'Amine',
-  lastName: 'Benali',
-  balance: 145200.50,
-  isVerified: true, 
-  monthlyIncome: 85000,
-  city: 'Algiers',
-  creditScore: 720 // Gold Tier
-};
-
-const MOCK_TRANSACTIONS: Transaction[] = [
-  { id: '1', type: TransactionType.PAYMENT, amount: -1500, category: 'Utilities', merchant: 'Sonelgaz', date: new Date().toISOString().split('T')[0], status: 'completed' },
-  { id: '2', type: TransactionType.PAYMENT, amount: -4500, category: 'Groceries', merchant: 'Uno Hypermarket', date: '2023-10-24', status: 'completed' },
-  { id: '3', type: TransactionType.DEPOSIT, amount: 85000, category: 'Salary', recipient: 'Tech Corp SARL', date: new Date().toISOString().split('T')[0], status: 'completed' },
-  { id: '4', type: TransactionType.TRANSFER, amount: -2000, category: 'P2P', recipient: 'Fatima Z.', date: '2023-10-18', status: 'completed' },
-  { id: '5', type: TransactionType.PAYMENT, amount: -3200, category: 'Entertainment', merchant: 'Netflix', date: '2023-10-17', status: 'completed' },
-];
+// Security & Support Modules
+import { FraudSettingsScreen } from './screens/FraudSettingsScreen';
+import { DeclarationCenterScreen } from './screens/DeclarationCenterScreen';
+import { CreateDeclarationScreen } from './screens/CreateDeclarationScreen';
 
 const App = () => {
-  const [view, setView] = useState<AppView>(AppView.LANDING);
-  const [user, setUser] = useState<User>(MOCK_USER);
-  const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
-  
-  // Signup State
-  const [signupData, setSignupData] = useState({
-    firstName: '',
-    lastName: '',
-    birthYear: '',
-    birthDay: '',
-    city: ''
+  // Navigation & Auth State
+  const [view, setView] = useState('LANDING');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [lang, setLang] = useState('dz'); // Default: Darja
+
+  // --- MOCK USER DATA ---
+  const [user, setUser] = useState({
+    firstName: "Amine",
+    lastName: "Benali",
+    balance: 124500, // DZD
+    creditScore: 780, // Trust Score
+    monthlyIncome: 85000,
+    isVerified: true,
+    homeCity: "Algiers",
+    knownDevice: "iPhone 13",
+    accountTier: "platinum"
   });
 
-  const handleNav = (v: string) => setView(AppView[v as keyof typeof AppView]);
+  const transactions = [
+    { id: 1, amount: -4500, category: 'Shopping', merchant: 'Zara Home', date: 'Today' },
+    { id: 2, amount: 2000, category: 'Transfer', merchant: 'Karim B.', date: 'Yesterday' },
+    { id: 3, amount: -1200, category: 'Food', merchant: 'Yassir Food', date: '21 Nov' },
+  ];
 
-  // Helper to get Tier info
-  const getTierInfo = (score: number) => {
-    if (score >= 800) return { 
-        name: 'Platinum', 
-        color: 'text-fuchsia-600', 
-        bg: 'bg-fuchsia-50', 
-        border: 'border-fuchsia-200', 
-        gradient: 'from-fuchsia-500 to-pink-500', 
-        shadow: 'shadow-fuchsia-500/30',
+  const tiers = {
+    platinum: {
+        name: 'Platinum',
         stars: 5,
+        gradient: 'from-fuchsia-600 to-purple-600',
+        color: 'text-purple-600',
+        bg: 'bg-purple-50',
+        border: 'border-purple-200',
         maxLoan: 500000
-    };
-    if (score >= 700) return { 
-        name: 'Gold', 
-        color: 'text-amber-500', 
-        bg: 'bg-amber-50', 
-        border: 'border-amber-200', 
-        gradient: 'from-amber-400 to-orange-500', 
-        shadow: 'shadow-amber-500/30',
-        stars: 4,
-        maxLoan: 200000
-    };
-    if (score >= 550) return { 
-        name: 'Silver', 
-        color: 'text-slate-600', 
-        bg: 'bg-slate-50', 
-        border: 'border-slate-200', 
-        gradient: 'from-slate-400 to-slate-600', 
-        shadow: 'shadow-slate-500/30',
-        stars: 3,
-        maxLoan: 50000
-    };
-    return { 
-        name: 'Bronze', 
-        color: 'text-orange-600', 
-        bg: 'bg-orange-50', 
-        border: 'border-orange-200', 
-        gradient: 'from-orange-400 to-red-500', 
-        shadow: 'shadow-orange-500/30',
-        stars: 2,
-        maxLoan: 10000
-    };
+    }
   };
 
-  const tier = getTierInfo(user.creditScore);
+  // Helper to update balance when a Loan is approved
+  const handleLoanBalanceUpdate = (amount: number) => {
+      setUser(prev => ({ ...prev, balance: prev.balance + amount }));
+  };
 
-  // Common Header Logic
-  const showHeader = [AppView.HOME, AppView.SEND_MONEY, AppView.LOANS, AppView.AI_ASSISTANT, AppView.BILLS, AppView.TOPUP, AppView.CREDIT_SCORE].includes(view);
+  // Determine active tab for BottomNav highlighting
+  const getActiveTab = (currentView: string) => {
+      const mapping: Record<string, string> = {
+          'LOANS': 'LOANS',
+          'SEND_MONEY': 'SEND_MONEY',
+          'AI_ASSISTANT': 'AI_ASSISTANT',
+          'HOME': 'HOME',
+          // Mappings for sub-screens
+          'CREDIT_SCORE': 'HOME',
+          'BILLS': 'HOME',
+          'TOPUP': 'HOME',
+          'SCAN': 'HOME',
+          'FRAUD_SETTINGS': 'HOME',
+          'DECLARATION_CENTER': 'HOME',
+          'CREATE_DECLARATION': 'HOME'
+      };
+      return mapping[currentView] || 'HOME';
+  };
 
   return (
-    <div className="min-h-screen bg-transparent text-slate-900 font-sans max-w-md mx-auto relative overflow-hidden border-x border-white/20 perspective-2000 shadow-2xl">
-        
-      {/* Top Header */}
-      {showHeader && (
-        <div className="px-6 pt-12 pb-4 flex justify-between items-center sticky top-0 bg-white/10 backdrop-blur-xl z-40 border-b border-white/20 animate-pop-in">
-          <div className="flex items-center gap-4" onClick={() => setView(AppView.HOME)}>
-            <div className="relative group cursor-pointer hover:scale-110 transition-transform duration-300">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur opacity-0 group-hover:opacity-50 transition duration-500"></div>
-                <div className="relative w-10 h-10 rounded-full bg-white/80 border border-white flex items-center justify-center overflow-hidden shadow-sm">
-                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Amine" alt="Profile" className="w-full h-full object-cover" />
+    // 1. Context Wrappers (Providers logic only, no UI injection)
+    <NotificationProvider lang={lang}>
+      <FraudProvider>
+        <CreditProvider userProfile={user} onBalanceUpdate={handleLoanBalanceUpdate}>
+          <DeclarationProvider>
+            
+            {/* 2. Global Centering Container */}
+            <div className="bg-slate-100 min-h-screen font-sans text-slate-900 flex justify-center items-center py-0 sm:py-6 selection:bg-blue-200">
+                
+                {/* 3. MOBILE PHONE FRAME (Relative Context) */}
+                <div className="w-full h-screen sm:h-[92vh] sm:max-w-[400px] bg-slate-50 sm:rounded-[2.5rem] shadow-2xl relative overflow-hidden flex flex-col border-[0px] sm:border-[8px] border-white ring-1 ring-black/5 transform transition-transform duration-300">
+
+                    {/* ✅ FIX: Notification UI lives INSIDE the phone frame now */}
+                    <NotificationUI lang={lang} />
+
+                    {/* --- HEADER --- 
+                        Visible only on inner screens when logged in.
+                    */}
+                    {isAuthenticated && !['LANDING', 'LOGIN', 'SIGNUP', 'AI_ASSISTANT'].includes(view) && (
+                         <div className="px-6 pt-8 sm:pt-6 pb-2 flex justify-between items-center bg-slate-50/80 backdrop-blur-sm z-30 sticky top-0 transition-all">
+                            <div 
+                                onClick={() => setLang(prev => prev === 'en' ? 'dz' : 'en')}
+                                className="cursor-pointer group select-none"
+                            >
+                                <h1 className="text-xl font-display font-bold text-slate-900 group-active:scale-95 transition-transform">
+                                    {user.firstName} {user.lastName}
+                                </h1>
+                                <div className="flex items-center gap-1.5 mt-1">
+                                    <span className="flex items-center gap-1 text-[10px] text-slate-500 font-bold bg-white px-2 py-0.5 rounded-full border border-slate-200 shadow-sm">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        Al-Wassit
+                                    </span>
+                                    <span className="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                        {lang.toUpperCase()}
+                                    </span>
+                                </div>
+                            </div>
+                            <button className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border-2 border-white shadow-md active:scale-95 transition">
+                                <img src="https://i.pravatar.cc/150?u=amine" alt="profile" className="w-full h-full object-cover"/>
+                            </button>
+                        </div>
+                    )}
+
+                    {/* --- MAIN CONTENT AREA --- */}
+                    <div className="flex-1 overflow-y-auto no-scrollbar relative p-6 pb-32">
+                        
+                        {/* --- PUBLIC VIEWS --- */}
+                        {view === 'LANDING' && (
+                            <LandingScreen 
+                                onLogin={() => setView('LOGIN')} 
+                                onSignup={() => setView('SIGNUP')} 
+                            />
+                        )}
+                        
+                        {view === 'LOGIN' && (
+                            <LoginScreen 
+                                onBack={() => setView('LANDING')} 
+                                onLoginSuccess={() => { setIsAuthenticated(true); setView('HOME'); }} 
+                            />
+                        )}
+                        
+                        {view === 'SIGNUP' && (
+                            <SignupScreen 
+                                data={user} onChange={() => {}} 
+                                onNext={() => setView('VERIFICATION')}
+                                onBack={() => setView('LANDING')}
+                            />
+                        )}
+
+                        {view === 'VERIFICATION' && (
+                            <VerificationScreen 
+                                userData={user}
+                                onComplete={() => { setIsAuthenticated(true); setView('HOME'); }}
+                                onBack={() => setView('SIGNUP')}
+                            />
+                        )}
+
+                        {/* --- DASHBOARD & UTILS --- */}
+                        {view === 'HOME' && (
+                            <HomeScreen 
+                                user={user} 
+                                tier={tiers.platinum} 
+                                transactions={transactions}
+                                onNavigate={setView}
+                                onRequestVerification={() => setView('VERIFICATION')}
+                            />
+                        )}
+
+                        {view === 'CREDIT_SCORE' && <CreditScoreScreen user={user} tier={tiers.platinum} onBack={() => setView('HOME')} />}
+                        {view === 'BILLS' && <BillsScreen onBack={() => setView('HOME')} />}
+                        {view === 'TOPUP' && <TopUpScreen onBack={() => setView('HOME')} />}
+                        {view === 'SEND_MONEY' && <SendMoneyScreen balance={user.balance} onBack={() => setView('HOME')} />}
+                        {view === 'SCAN' && <ScanScreen onBack={() => setView('HOME')} />}
+                        {view === 'AI_ASSISTANT' && <AIAssistantScreen history={transactions} />}
+
+                        {/* --- FEATURE: LOANS (Signed Contract) --- */}
+                        {view === 'LOANS' && <LoanRequestScreen user={user} onBack={() => setView('HOME')} lang={lang} />}
+
+                        {/* --- FEATURE: FRAUD & SECURITY --- */}
+                        {view === 'FRAUD_SETTINGS' && <FraudSettingsScreen onBack={() => setView('HOME')} lang={lang} />}
+
+                        {/* --- FEATURE: USER DECLARATIONS --- */}
+                        {view === 'DECLARATION_CENTER' && <DeclarationCenterScreen onNavigate={setView} lang={lang} />}
+                        {view === 'CREATE_DECLARATION' && <CreateDeclarationScreen onNavigate={setView} lang={lang} />}
+
+                    </div>
+
+                    {/* --- BOTTOM NAVIGATION --- */}
+                    {isAuthenticated && !['LANDING', 'LOGIN', 'SIGNUP'].includes(view) && (
+                        <div className="absolute bottom-6 left-0 right-0 z-40 flex justify-center pointer-events-none">
+                            <div className="pointer-events-auto">
+                                <BottomNav 
+                                    activeTab={getActiveTab(view)} 
+                                    onTabChange={setView} 
+                                />
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-xs text-slate-600 font-bold tracking-wider uppercase">Hello, {user.firstName}</span>
-              <span className="text-sm font-bold text-slate-900">Al-Wassit</span>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            {/* Credit Score Badge */}
-            <button 
-              onClick={() => setView(AppView.CREDIT_SCORE)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${tier.border} ${tier.bg} hover:scale-105 active:scale-95 transition-transform cursor-pointer shadow-sm`}
-            >
-                <div className="flex -space-x-1">
-                    {Array.from({length: Math.min(3, tier.stars)}).map((_, i) => (
-                        <React.Fragment key={i}>
-                            <Icon name="star" className={`text-[12px] ${tier.color}`} />
-                        </React.Fragment>
-                    ))}
-                </div>
-                <span className={`text-xs font-bold ${tier.color}`}>{user.creditScore}</span>
-            </button>
 
-            <button className="w-10 h-10 rounded-full bg-white/50 flex items-center justify-center border border-white hover:bg-white transition relative shadow-sm hover:shadow-md hover:-translate-y-1 duration-300">
-                <Icon name="notifications" className="text-slate-700" />
-                <div className="absolute top-2 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse ring-2 ring-white"></div>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Main Content Area */}
-      <div className="px-5 pb-32 pt-4 min-h-screen">
-        {view === AppView.LANDING && (
-            <LandingScreen 
-                onLogin={() => setView(AppView.LOGIN)} 
-                onSignup={() => setView(AppView.SIGNUP_FORM)} 
-            />
-        )}
-
-        {view === AppView.LOGIN && (
-            <LoginScreen 
-                onBack={() => setView(AppView.LANDING)} 
-                onLoginSuccess={() => setView(AppView.HOME)} 
-            />
-        )}
-
-        {view === AppView.SIGNUP_FORM && (
-          <SignupScreen 
-            data={signupData} 
-            onChange={setSignupData} 
-            onNext={() => setView(AppView.VERIFICATION)}
-            onBack={() => setView(AppView.LANDING)}
-          />
-        )}
-        
-        {view === AppView.VERIFICATION && (
-          <VerificationScreen 
-            userData={signupData}
-            onComplete={() => {
-              setUser({ ...MOCK_USER, firstName: signupData.firstName || 'User', city: signupData.city, isVerified: true });
-              setView(AppView.HOME);
-            }}
-            onBack={() => setView(AppView.SIGNUP_FORM)}
-          />
-        )}
-
-        {view === AppView.HOME && (
-          <HomeScreen 
-            user={user} 
-            transactions={transactions} 
-            onNavigate={handleNav} 
-            onRequestVerification={() => setView(AppView.VERIFICATION)}
-            tier={tier}
-          />
-        )}
-        
-        {view === AppView.SEND_MONEY && <SendMoneyScreen balance={user.balance} onBack={() => setView(AppView.HOME)} />}
-        {view === AppView.LOANS && <LoanScreen user={user} tier={tier} />}
-        {view === AppView.AI_ASSISTANT && <AIAssistantScreen history={transactions} />}
-        {view === AppView.BILLS && <BillsScreen onBack={() => setView(AppView.HOME)} />}
-        {view === AppView.TOPUP && <TopUpScreen onBack={() => setView(AppView.HOME)} />}
-        {view === AppView.SCAN && <ScanScreen onBack={() => setView(AppView.HOME)} />}
-        {view === AppView.CREDIT_SCORE && <CreditScoreScreen user={user} tier={tier} onBack={() => setView(AppView.HOME)} />}
-      </div>
-
-      {/* Bottom Navigation */}
-      {[AppView.HOME, AppView.SEND_MONEY, AppView.LOANS, AppView.AI_ASSISTANT, AppView.BILLS, AppView.TOPUP].includes(view) && (
-        <BottomNav activeTab={AppView[view]} onTabChange={handleNav} />
-      )}
-    </div>
+          </DeclarationProvider>
+        </CreditProvider>
+      </FraudProvider>
+    </NotificationProvider>
   );
 };
 
