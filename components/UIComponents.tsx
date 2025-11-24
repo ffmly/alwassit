@@ -57,35 +57,62 @@ export const Card = ({ children, className = '', noPadding = false, delay = '' }
   </div>
 );
 
-export const BottomNav = ({ activeTab, onTabChange }: { activeTab: string, onTabChange: (t: any) => void }) => {
+export const BottomNav = ({ activeTab, onTabChange, showVoiceAssist, isListening, onVoiceClick }: { activeTab: string, onTabChange: (t: any) => void, showVoiceAssist?: boolean, isListening?: boolean, onVoiceClick?: () => void }) => {
   const tabs = [
     { id: 'HOME', icon: 'wallet', label: 'Wallet' },
     { id: 'SEND_MONEY', icon: 'send', label: 'Send' },
     { id: 'LOANS', icon: 'credit_score', label: 'Loans' },
+    { id: 'MAP', icon: 'map', label: 'Map' },
     { id: 'AI_ASSISTANT', icon: 'smart_toy', label: 'AI' },
   ];
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-[320px] z-50 perspective-1000">
-      <div className="glass-panel rounded-full px-1 py-2 flex justify-between items-center shadow-[0_20px_40px_-5px_rgba(0,0,0,0.1)] border border-white/60 bg-white/30 backdrop-blur-xl transform transition-transform duration-300 hover:scale-105 hover:-translate-y-1">
-        {tabs.map((tab) => {
-          const isActive = activeTab === tab.id;
-          return (
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-[360px] z-50 perspective-1000">
+      <div className="glass-panel rounded-full px-2 py-2 flex justify-between items-center shadow-[0_20px_40px_-5px_rgba(0,0,0,0.1)] border border-white/60 bg-white/30 backdrop-blur-xl relative">
+
+        {tabs.slice(0, 2).map((tab) => (
+          <NavButton key={tab.id} tab={tab} isActive={activeTab === tab.id} onClick={() => onTabChange(tab.id)} />
+        ))}
+
+        {/* Central Voice Assist Button */}
+        {showVoiceAssist ? (
+          <div className="relative -top-6 group">
+            {isListening && (
+              <>
+                <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-20 duration-1000"></div>
+                <div className="absolute -inset-4 border border-red-200 rounded-full animate-[spin_4s_linear_infinite] opacity-100 transition-opacity"></div>
+              </>
+            )}
             <button
-              key={tab.id}
-              onClick={() => onTabChange(tab.id)}
-              className={`relative flex items-center justify-center w-14 h-14 rounded-full transition-all duration-500 group ${isActive ? 'bg-blue-600 text-white shadow-[0_10px_20px_-5px_rgba(37,99,235,0.5)] -translate-y-4 scale-110 ring-4 ring-white/20' : 'text-slate-500 hover:text-slate-700 hover:bg-white/40'}`}
+              className={`relative w-16 h-16 rounded-full bg-gradient-to-br ${isListening ? 'from-red-500 to-red-600' : 'from-blue-500 to-blue-600'} text-white shadow-lg shadow-blue-500/40 flex items-center justify-center transform transition-transform duration-300 hover:scale-110 active:scale-95 border-4 border-white/20 backdrop-blur-md`}
+              onClick={onVoiceClick}
             >
-              <Icon name={tab.icon} className={`transition-transform duration-300 ${isActive ? "text-[26px]" : "text-[24px] group-hover:scale-110"}`} />
-              {isActive && (
-                <span className="absolute -bottom-8 text-[10px] font-bold text-slate-600 tracking-wide animate-pop-in bg-white/80 px-2 py-0.5 rounded-full shadow-sm backdrop-blur-sm border border-white/50">
-                  {tab.label}
-                </span>
-              )}
+              <Icon name={isListening ? "mic_off" : "mic"} className={`text-3xl ${isListening ? 'animate-pulse' : ''}`} />
             </button>
-          )
-        })}
+          </div>
+        ) : (
+          <NavButton tab={tabs[2]} isActive={activeTab === tabs[2].id} onClick={() => onTabChange(tabs[2].id)} />
+        )}
+
+        {tabs.slice(showVoiceAssist ? 2 : 3).map((tab) => (
+          <NavButton key={tab.id} tab={tab} isActive={activeTab === tab.id} onClick={() => onTabChange(tab.id)} />
+        ))}
+
       </div>
     </div>
   );
 };
+
+const NavButton = ({ tab, isActive, onClick }: any) => (
+  <button
+    onClick={onClick}
+    className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-500 group ${isActive ? 'bg-white text-blue-600 shadow-md scale-110' : 'text-slate-500 hover:text-slate-700 hover:bg-white/40'}`}
+  >
+    <Icon name={tab.icon} className={`transition-transform duration-300 ${isActive ? "text-[24px]" : "text-[22px] group-hover:scale-110"}`} />
+    {isActive && (
+      <span className="absolute -bottom-8 text-[10px] font-bold text-slate-600 tracking-wide animate-pop-in bg-white/80 px-2 py-0.5 rounded-full shadow-sm backdrop-blur-sm border border-white/50">
+        {tab.label}
+      </span>
+    )}
+  </button>
+);
