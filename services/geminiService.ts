@@ -1,7 +1,10 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, Type, SchemaType } from "@google/genai";
 import { Transaction } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Initialize Gemini
+// Note: In a real app, never expose the key on the client side. 
+// This is for demonstration within the secure runtime environment.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
 const MODEL_FLASH = 'gemini-2.5-flash';
 
