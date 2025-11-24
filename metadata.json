@@ -1,0 +1,8 @@
+{
+  "name": "Al-Wassit - Algerian Digital Finance",
+  "description": "A comprehensive financial inclusion platform for Algeria offering digital wallets, P2P transfers, micro-loans, and AI-driven financial advice in Darja.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
