@@ -27,6 +27,9 @@ export interface User {
   city?: string;
   birthDate?: string;
   creditScore: number;
+  gender?: 'Male' | 'Female';
+  nid?: string;
+  age?: number;
 }
 
 export interface LoanOffer {
@@ -50,5 +53,6 @@ export enum AppView {
   BILLS,
   TOPUP,
   SCAN,
-  CREDIT_SCORE
+  CREDIT_SCORE,
+  MAP
 }

@@ -2,7 +2,20 @@
 import React from 'react';
 import { Icon, Button, Input } from '../components/UIComponents';
 
-export const SendMoneyScreen = ({ balance, onBack }: { balance: number, onBack: () => void }) => {
+export const SendMoneyScreen = ({ balance, onBack, onSend }: { balance: number, onBack: () => void, onSend: (amount: number, recipient: string) => void }) => {
+    const [recipient, setRecipient] = React.useState('');
+    const [amount, setAmount] = React.useState('');
+
+    const handleSend = () => {
+        const numAmount = parseFloat(amount);
+        if (recipient && numAmount > 0 && numAmount <= balance) {
+            onSend(numAmount, recipient);
+        } else {
+            // Ideally show an error toast here
+            alert("Please enter a valid recipient and amount (within balance).");
+        }
+    };
+
     return (
         <div className="pt-4 space-y-6">
             <div className="flex items-center gap-4 mb-2 animate-pop-in">
@@ -16,15 +29,28 @@ export const SendMoneyScreen = ({ balance, onBack }: { balance: number, onBack: 
             </div>
 
             <div className="space-y-4 animate-pop-in delay-100">
-                <Input label="Recipient" placeholder="Name or Phone Number" icon="person" />
-                <Input label="Amount" placeholder="0.00" type="number" icon="attach_money" />
+                <Input
+                    label="Recipient"
+                    placeholder="Name or Phone Number"
+                    icon="person"
+                    value={recipient}
+                    onChange={(e: any) => setRecipient(e.target.value)}
+                />
+                <Input
+                    label="Amount"
+                    placeholder="0.00"
+                    type="number"
+                    icon="attach_money"
+                    value={amount}
+                    onChange={(e: any) => setAmount(e.target.value)}
+                />
             </div>
 
             <div>
                 <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 animate-pop-in delay-200">Recent Contacts</h3>
                 <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                     {['Fatima', 'Karim', 'Yasmine', 'Omar'].map((n, i) => (
-                        <div key={i} className="flex flex-col items-center gap-2 cursor-pointer group animate-pop-in" style={{ animationDelay: `${(i+2)*100}ms` }}>
+                        <div key={i} onClick={() => setRecipient(n)} className="flex flex-col items-center gap-2 cursor-pointer group animate-pop-in" style={{ animationDelay: `${(i + 2) * 100}ms` }}>
                             <div className="w-14 h-14 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                                 <span className="font-bold text-slate-600 text-lg">{n[0]}</span>
                             </div>
@@ -35,7 +61,7 @@ export const SendMoneyScreen = ({ balance, onBack }: { balance: number, onBack: 
             </div>
 
             <div className="pt-8 animate-pop-in delay-300">
-                 <Button>Send Now <Icon name="send" /></Button>
+                <Button onClick={handleSend}>Send Now <Icon name="send" /></Button>
             </div>
         </div>
     );
