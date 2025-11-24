@@ -1,19 +1,7 @@
-import { GoogleGenAI, Type, SchemaType } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import { Transaction } from "../types";
 
-// Safely retrieve API key to prevent crashes in environments where process is not defined
-const getApiKey = () => {
-  try {
-    if (typeof process !== 'undefined' && process.env?.API_KEY) {
-      return process.env.API_KEY;
-    }
-  } catch (e) {
-    console.warn("Environment access error");
-  }
-  return '';
-};
-
-const ai = new GoogleGenAI({ apiKey: getApiKey() });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const MODEL_FLASH = 'gemini-2.5-flash';
 
