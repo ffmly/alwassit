@@ -9,7 +9,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 const MODEL_FLASH = 'gemini-2.5-flash';
 
 export const getFinancialAdvice = async (
-  transactions: Transaction[], 
+  transactions: Transaction[],
   language: 'en' | 'ar-DZ' = 'en'
 ): Promise<string> => {
   try {
@@ -77,20 +77,56 @@ export const assessLoanRisk = async (
 };
 
 export const chatWithAssistant = async (message: string, context: string): Promise<string> => {
-    try {
-        const prompt = `
+  try {
+    const prompt = `
             System: You are Al-Wassit's voice assistant. You speak English or Algerian Darja based on user input.
             User Context: ${context}
             User Message: ${message}
             
             Reply briefly (max 2 sentences).
         `;
-        const response = await ai.models.generateContent({
-            model: MODEL_FLASH,
-            contents: prompt
-        });
-        return response.text || "I didn't catch that.";
-    } catch (e) {
-        return "Service unavailable.";
-    }
+    const response = await ai.models.generateContent({
+      model: MODEL_FLASH,
+      contents: prompt
+    });
+    return response.text || "I didn't catch that.";
+  } catch (e) {
+    return "Service unavailable.";
+  }
 }
+
+export const interpretVoiceCommand = async (text: string): Promise<{ intent: string, entities: any }> => {
+  try {
+    const prompt = `
+            Act as an intent classifier for a banking app in Algeria.
+            Understand English, French, and Algerian Arabic (Darja).
+            
+            User Input: "${text}"
+            
+            Possible Intents:
+            - SEND_MONEY (e.g., "Ab3at drahem", "Send money", "Verser")
+            - CHECK_BALANCE (e.g., "Chhal 3andi", "Check balance", "Solde")
+            - LOANS (e.g., "Kridi", "Loan", "Credit")
+            - UNKNOWN
+            
+            Extract Entities:
+            - amount (number)
+            - recipient (string)
+            
+            Return JSON ONLY: { "intent": "...", "entities": { ... } }
+        `;
+
+    const response = await ai.models.generateContent({
+      model: MODEL_FLASH,
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json"
+      }
+    });
+
+    return JSON.parse(response.text || '{ "intent": "UNKNOWN" }');
+  } catch (error) {
+    console.error("Voice Command Error:", error);
+    return { intent: "UNKNOWN", entities: {} };
+  }
+};

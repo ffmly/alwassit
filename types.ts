@@ -1,4 +1,3 @@
-
 export enum TransactionType {
   TRANSFER = 'TRANSFER',
   PAYMENT = 'PAYMENT',
@@ -27,6 +26,9 @@ export interface User {
   city?: string;
   birthDate?: string;
   creditScore: number;
+  gender?: 'Male' | 'Female';
+  nid?: string;
+  age?: number;
 }
 
 export interface LoanOffer {
@@ -50,8 +52,11 @@ export enum AppView {
   BILLS,
   TOPUP,
   SCAN,
-  CREDIT_SCORE
+  CREDIT_SCORE,
+  MAP
 }
+
+// --- FRAUD DETECTION TYPES (Imene) ---
 export type FraudSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 
 export interface FraudEvent {
@@ -78,8 +83,8 @@ export interface FraudSettings {
         sms: boolean;
     };
 }
-// --- START OF FILE types.ts (APPEND) ---
 
+// --- CREDIT & LOAN CONTRACT TYPES (Imene) ---
 export interface CreditAssessment {
     eligible: boolean;
     maxAmount: number;
@@ -99,6 +104,7 @@ export interface ContractData {
     termsVersion: string;
 }
 
+// --- DECLARATION TYPES (Imene) ---
 export type DeclarationCategory = 
   | 'TRANSACTION' 
   | 'REPORT_USER' 
@@ -121,8 +127,8 @@ export interface Declaration {
   signature: string; // Base64
   attachments?: string[];
 }
-// --- START OF FILE types.ts (APPEND) ---
 
+// --- NOTIFICATION TYPES (Imene) ---
 export type NotificationType = 'SUCCESS' | 'ERROR' | 'WARNING' | 'INFO';
 
 export interface AppNotification {
