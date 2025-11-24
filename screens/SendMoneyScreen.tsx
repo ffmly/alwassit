@@ -1,4 +1,3 @@
-Ryu, [24/11/2025 23:48]
 import React from 'react';
 import { Icon, Button, Input } from '../components/UIComponents';
 import { useNotification } from '../context/NotificationContext';
@@ -80,7 +79,7 @@ export const SendMoneyScreen = ({ balance, onBack, onSend }: { balance: number, 
                             key={i} 
                             onClick={() => setRecipient(n)} 
                             className="flex flex-col items-center gap-2 cursor-pointer group animate-pop-in" 
-                            style={{ animationDelay: ${(i + 2) * 100}ms }}
+                            style={{ animationDelay: `${(i + 2) * 100}ms` }}
                         >
                             <div className="w-14 h-14 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                                 <span className="font-bold text-slate-600 text-lg">{n[0]}</span>
@@ -89,9 +88,7 @@ export const SendMoneyScreen = ({ balance, onBack, onSend }: { balance: number, 
                         </div>
                     ))}
                 </div>
-
-Ryu, [24/11/2025 23:48]
-</div>
+            </div>
 
             <div className="pt-8 animate-pop-in delay-300">
                 <Button onClick={handleSend}>Send Now <Icon name="send" /></Button>

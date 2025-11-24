@@ -1,4 +1,3 @@
-Ryu, [24/11/2025 23:47]
 import React from 'react';
 
 export const Icon = ({ name, className = "", onClick }: any) => (
@@ -12,7 +11,7 @@ export const Icon = ({ name, className = "", onClick }: any) => (
 );
 
 export const Button = ({ children, variant = 'primary', onClick, className = '', disabled = false, delay = '' }: any) => {
-  const base = w-full py-4 px-6 rounded-2xl font-bold tracking-wide transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 relative overflow-hidden group shadow-sm animate-pop-in ${delay};
+  const base = `w-full py-4 px-6 rounded-2xl font-bold tracking-wide transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 relative overflow-hidden group shadow-sm animate-pop-in ${delay}`;
   
   const variants = {
     primary: "bg-blue-600 text-white shadow-[0_10px_20px_-5px_rgba(37,99,235,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(37,99,235,0.5)] hover:translate-y-[-2px]",
@@ -75,9 +74,7 @@ export const BottomNav = ({ activeTab, onTabChange, showVoiceAssist, isListening
         ))}
 
         {/* Central Voice Assist Button */}
-
-Ryu, [24/11/2025 23:47]
-{showVoiceAssist ? (
+        {showVoiceAssist ? (
           <div className="relative -top-6 group">
             {isListening && (
               <>
