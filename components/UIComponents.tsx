@@ -1,8 +1,8 @@
 import React from 'react';
 
 export const Icon = ({ name, className = "", onClick }: { name: string; className?: string; onClick?: () => void }) => (
-  <span 
-    className={`material-symbols-rounded select-none transition-all duration-300 ${className}`} 
+  <span
+    className={`material-symbols-rounded select-none transition-all duration-300 ${className}`}
     onClick={onClick}
     style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}
   >
@@ -12,17 +12,17 @@ export const Icon = ({ name, className = "", onClick }: { name: string; classNam
 
 export const Button = ({ children, variant = 'primary', onClick, className = '', disabled = false, delay = '' }: any) => {
   const base = `w-full py-4 px-6 rounded-2xl font-bold tracking-wide transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 relative overflow-hidden group shadow-sm animate-pop-in ${delay}`;
-  
+
   const variants = {
     primary: "bg-blue-600 text-white shadow-[0_10px_20px_-5px_rgba(37,99,235,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(37,99,235,0.5)] hover:translate-y-[-2px]",
     secondary: "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 float-3d",
     outline: "border border-slate-300 text-slate-500 hover:border-slate-400 hover:text-slate-700 bg-transparent",
     danger: "bg-red-50 text-red-600 border border-red-100 hover:bg-red-100"
   };
-  
+
   return (
-    <button 
-      onClick={onClick} 
+    <button
+      onClick={onClick}
       disabled={disabled}
       className={`${base} ${variants[variant as keyof typeof variants]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
     >
@@ -66,18 +66,22 @@ export const BottomNav = ({ activeTab, onTabChange }: { activeTab: string, onTab
   ];
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-50 perspective-1000">
-      <div className="glass-panel rounded-full px-2 py-3 flex justify-between items-center shadow-[0_20px_40px_-5px_rgba(0,0,0,0.1)] border border-white/80 transform transition-transform duration-300 hover:scale-105 hover:-translate-y-1">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-[320px] z-50 perspective-1000">
+      <div className="glass-panel rounded-full px-1 py-2 flex justify-between items-center shadow-[0_20px_40px_-5px_rgba(0,0,0,0.1)] border border-white/60 bg-white/30 backdrop-blur-xl transform transition-transform duration-300 hover:scale-105 hover:-translate-y-1">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-500 ${isActive ? 'bg-blue-600 text-white shadow-[0_10px_20px_-5px_rgba(37,99,235,0.5)] -translate-y-3 scale-110' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'}`}
+              className={`relative flex items-center justify-center w-14 h-14 rounded-full transition-all duration-500 group ${isActive ? 'bg-blue-600 text-white shadow-[0_10px_20px_-5px_rgba(37,99,235,0.5)] -translate-y-4 scale-110 ring-4 ring-white/20' : 'text-slate-500 hover:text-slate-700 hover:bg-white/40'}`}
             >
-              <Icon name={tab.icon} className={isActive ? "text-[24px]" : "text-[24px]"} />
-              {isActive && <span className="absolute -bottom-6 text-[10px] font-bold text-blue-600 tracking-wide animate-pop-in">{tab.label}</span>}
+              <Icon name={tab.icon} className={`transition-transform duration-300 ${isActive ? "text-[26px]" : "text-[24px] group-hover:scale-110"}`} />
+              {isActive && (
+                <span className="absolute -bottom-8 text-[10px] font-bold text-slate-600 tracking-wide animate-pop-in bg-white/80 px-2 py-0.5 rounded-full shadow-sm backdrop-blur-sm border border-white/50">
+                  {tab.label}
+                </span>
+              )}
             </button>
           )
         })}
