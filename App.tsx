@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { AppView, Transaction, TransactionType, User } from './types';
 import { Icon, BottomNav } from './components/UIComponents';
 import { interpretVoiceCommand } from './services/geminiService';
-
+import { LanguageProvider } from './context/LanguageContext';
 // --- CONTEXT PROVIDERS ---
 import { FraudProvider } from './context/FraudContext';
 import { CreditProvider } from './context/CreditContext';
@@ -202,7 +202,8 @@ const App = () => {
   const showVoiceAssist = true;
 
   return (
-    <NotificationProvider lang={lang}>
+    <LanguageProvider>
+      <NotificationProvider lang={lang}>
       <FraudProvider>
         <CreditProvider userProfile={user} onBalanceUpdate={handleLoanBalanceUpdate}>
           <DeclarationProvider>
@@ -289,6 +290,7 @@ const App = () => {
         </CreditProvider>
       </FraudProvider>
     </NotificationProvider>
+    </LanguageProvider>
   );
 };
 
